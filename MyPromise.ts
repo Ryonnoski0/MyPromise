@@ -143,6 +143,13 @@ class MyPromise<T = any> {
             this._runQueue();
         });
     }
+
+    /**
+     * 捕获失败回调
+     */
+    public catch(onRejected?: any): MyPromise<any> {
+        return this.then(null, onRejected);
+    }
 }
 
 export default MyPromise;
