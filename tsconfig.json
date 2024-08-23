@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "CommonJS",
+        "lib": ["esnext", "dom"], // 包含 'dom' 库
+        "outDir": "dist",
+        "strict": true
+    },
+    "include": ["./*.ts"],
+    "exclude": ["node_modules"]
+}
