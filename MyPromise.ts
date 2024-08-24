@@ -184,6 +184,13 @@ class MyPromise<T = any> {
             }
         });
     }
+
+    /**
+     * 返回一个失败的Promise
+     */
+    public static reject(reason?: any) {
+        return new MyPromise((_, reject) => reject(reason));
+    }
 }
 
 export default MyPromise;
