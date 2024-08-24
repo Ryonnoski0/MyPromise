@@ -230,11 +230,8 @@ class MyPromise<T = any> {
     public static allSettled<T>(promises: Iterable<MyPromise<T> | T>) {
         const ps = [];
         for (let p of promises) {
-            if (!isPromise(p)) {
-                p = MyPromise.resolve(p);
-            }
             ps.push(
-                (p as MyPromise<T>).then(
+                MyPromise.resolve(p).then(
                     (value) => ({
                         status: RESOLVE,
                         value,
@@ -247,6 +244,17 @@ class MyPromise<T = any> {
             );
         }
         return MyPromise.all(ps);
+    }
+
+    /**
+     * 返回一个 Promise。这个返回的 promise 会随着第一个 promise 的敲定而敲定。
+     */
+    public static race<T>(promises: Iterable<MyPromise<T> | T>) {
+        return new MyPromise((resolve, reject) => {
+            for (let p of promises) {
+                MyPromise.resolve(p).then(resolve, reject);
+            }
+        });
     }
 }
 
