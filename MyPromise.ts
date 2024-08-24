@@ -172,7 +172,7 @@ class MyPromise<T = any> {
      * 传递的参数是Promise时返回这个Promise
      * 当参数为空或非thenable时，返回一个新的状态为fulfilled的Promise。
      * 当参数为thenable时，返回一个新的Promise，而它的状态由自身的then()方法控制
-     * @param onResolve
+     * @param data
      */
     public static resolve(data?: any) {
         if (data instanceof MyPromise) return data;
