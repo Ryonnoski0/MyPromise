@@ -150,6 +150,22 @@ class MyPromise<T = any> {
     public catch(onRejected?: any): MyPromise<any> {
         return this.then(null, onRejected);
     }
+
+    /**
+     * 执行结束回调
+     */
+    public finally(onFinally?: any) {
+        return this.then(
+            (res: T) => {
+                onFinally();
+                return res;
+            },
+            (reason: any) => {
+                onFinally();
+                return reason;
+            },
+        );
+    }
 }
 
 export default MyPromise;
