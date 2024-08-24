@@ -199,7 +199,7 @@ class MyPromise<T = any> {
      * 返回成功的promise的数据的数组
      * 如果有失败则立刻返回失败，参数是失败的原因
      */
-    public static all<T>(promises: Iterable<T>) {
+    public static all<T>(promises: Iterable<MyPromise<T> | T>) {
         return new MyPromise((resolve, reject) => {
             try {
                 const results: T[] = [];
@@ -227,7 +227,27 @@ class MyPromise<T = any> {
      * 返回promise的数据的数组
      * 如果有失败或者成功都都会写在数组里面
      */
-    public static allSettled<T>(promises: Iterable<T>) {}
+    public static allSettled<T>(promises: Iterable<MyPromise<T> | T>) {
+        const ps = [];
+        for (let p of promises) {
+            if (!isPromise(p)) {
+                p = MyPromise.resolve(p);
+            }
+            ps.push(
+                (p as MyPromise<T>).then(
+                    (value) => ({
+                        status: RESOLVE,
+                        value,
+                    }),
+                    (reason) => ({
+                        status: REJECT,
+                        reason,
+                    }),
+                ),
+            );
+        }
+        return MyPromise.all(ps);
+    }
 }
 
 export default MyPromise;

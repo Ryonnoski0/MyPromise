@@ -1,13 +1,13 @@
 import MyPromise from "./MyPromise";
 const p1 = new MyPromise((resolve, reject) => {
     setTimeout(() => {
-        resolve("MyPromise 1 resolved");
+        reject("MyPromise 1 reject");
     }, 1000);
 });
 
-const p2 = new MyPromise((resolve) => {
+const p2 = new MyPromise((resolve, reject) => {
     setTimeout(() => {
-        resolve("MyPromise 2 resolved");
+        reject("MyPromise 2 reject");
     }, 500);
 });
 
@@ -17,7 +17,7 @@ const p3 = new MyPromise((resolve) => {
     }, 1500);
 });
 
-MyPromise.all([p1, p2, p3])
+MyPromise.allSettled([p1, p2, p3])
     .then(
         (results) => {
             console.log("All MyPromises resolved:");
