@@ -7,6 +7,9 @@ type Reject = (reason: any) => void;
 type State = typeof PENDING | typeof RESOLVE | typeof REJECT;
 type Executor<T> = (resolve: Resolve<T>, reject: Reject) => void;
 type Value<T> = T | any;
+type onResolve<T> = ((value: T) => any) | undefined | null | MyPromise<T>;
+type onRejected<T> = ((reason: any) => never) | undefined | null | MyPromise<never | T>;
+
 interface FunctionObject<T> {
     state: State;
     fn?: Function;
@@ -137,7 +140,7 @@ class MyPromise<T = any> {
     /**
      * 任务完成回调
      */
-    public then(onFulfilled?: any, onRejected?: any): MyPromise<any> {
+    public then<U = T, V = never>(onFulfilled?: ((value: T) => U) | undefined | null, onRejected?: ((value: T) => V) | undefined | null): MyPromise<T | V> {
         return new MyPromise((resolve, reject) => {
             this._pushFunctionQueue(onFulfilled, onRejected, resolve, reject);
             this._runQueue();
@@ -147,21 +150,21 @@ class MyPromise<T = any> {
     /**
      * 捕获失败回调
      */
-    public catch(onRejected?: any): MyPromise<any> {
+    public catch<V = never>(onRejected?: ((value: T) => V) | undefined | null): MyPromise<T | V> {
         return this.then(null, onRejected);
     }
 
     /**
      * 执行结束回调
      */
-    public finally(onFinally?: any) {
+    public finally(onFinally?: (() => void) | undefined | null) {
         return this.then(
-            (res: T) => {
-                onFinally();
+            (res) => {
+                onFinally && onFinally();
                 return res;
             },
-            (reason: any) => {
-                onFinally();
+            (reason) => {
+                onFinally && onFinally();
                 return reason;
             },
         );
