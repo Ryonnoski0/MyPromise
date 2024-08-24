@@ -11,13 +11,13 @@ const p2 = new MyPromise((resolve, reject) => {
     }, 500);
 });
 
-const p3 = new MyPromise((resolve) => {
+const p3 = new MyPromise((resolve, reject) => {
     setTimeout(() => {
-        resolve("MyPromise 3 resolved");
+        reject("MyPromise 3 reject");
     }, 1500);
 });
 
-MyPromise.race([p1, p2, p3])
+MyPromise.any([p1, p2, p3])
     .then(
         (results) => {
             console.log("All MyPromises resolved:");
@@ -25,13 +25,11 @@ MyPromise.race([p1, p2, p3])
             return 1;
         },
         (reject) => {
+            console.log("全败了:", reject);
             return reject;
         },
     )
     .catch((error) => {
         console.error("One of the MyPromises failed:", error);
         return "Error";
-    })
-    .then((results) => {
-        console.log("results", results);
     });

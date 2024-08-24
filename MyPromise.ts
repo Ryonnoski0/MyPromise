@@ -256,6 +256,31 @@ class MyPromise<T = any> {
             }
         });
     }
+
+    /**
+     * 当输入的任何一个 Promise 兑现时，这个返回的 Promise 将会兑现，并返回第一个兑现的值。当所有输入 Promise 都被拒绝（包括传递了空的可迭代对象）时，它会以一个包含拒绝原因数组的 AggregateError 拒绝。
+     */
+    public static any<T>(promises: Iterable<MyPromise<T> | T>) {
+        return new MyPromise((resolve, reject) => {
+            const errors: Error[] = [];
+            let count = 0;
+            let resolveCount = 0;
+            for (let p of promises) {
+                let index = count;
+                count++;
+                MyPromise.resolve(p).then(resolve, (reason) => {
+                    resolveCount++;
+                    errors[index] = reason;
+                    if (count === resolveCount) {
+                        reject(new AggregateError(errors, "全部都失败了", {}));
+                    }
+                });
+            }
+            if (count === 0) {
+                reject(new AggregateError(errors, "全部都失败了", {}));
+            }
+        });
+    }
 }
 
 export default MyPromise;
