@@ -1,16 +1,18 @@
 import MyPromise from "./MyPromise";
-const promise = new Promise((resolve, reject) => {
+import type { Resolve, Reject } from "./MyPromise";
+const promise = new MyPromise((resolve, reject) => {
     resolve("Something went wrong!");
 });
 
-promise
-    .then((result: any) => {
-        console.log("Then:", result);
-    })
-    .catch((error: any) => {
-        console.error("Catch:", error);
-    })
-    .finally(() => {
-        console.log("Finally: Promise completed.", promise);
-        throw new Error("error");
-    });
+const p = MyPromise.resolve({
+    then(resolve: Resolve<string>, reject: Reject) {
+        resolve("Resolved successfully!");
+    },
+});
+console.log(
+    MyPromise.resolve({
+        then(resolve: Resolve<string>, reject: Reject) {
+            resolve("Resolved successfully!");
+        },
+    }),
+);
