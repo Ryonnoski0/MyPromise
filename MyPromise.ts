@@ -194,6 +194,40 @@ class MyPromise<T = any> {
     public static reject(reason?: any) {
         return new MyPromise((_, reject) => reject(reason));
     }
+
+    /**
+     * 返回成功的promise的数据的数组
+     * 如果有失败则立刻返回失败，参数是失败的原因
+     */
+    public static all<T>(promises: Iterable<T>) {
+        return new MyPromise((resolve, reject) => {
+            try {
+                const results: T[] = [];
+                let count = 0;
+                let resolveCount = 0;
+                for (const p of promises) {
+                    let index = count;
+                    count++;
+                    MyPromise.resolve(p).then((data: T) => {
+                        resolveCount++;
+                        results[index] = data;
+                        if (count === resolveCount) {
+                            resolve(results);
+                        }
+                    }, reject);
+                }
+                if (count === 0) resolve(results);
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+
+    /**
+     * 返回promise的数据的数组
+     * 如果有失败或者成功都都会写在数组里面
+     */
+    public static allSettled<T>(promises: Iterable<T>) {}
 }
 
 export default MyPromise;
